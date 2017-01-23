@@ -24,7 +24,7 @@ TARGET_OTA_ASSERT_DEVICE := logands,S7272,GT-S7272,hawaii
 BOARD_KERNEL_BASE := 0x82000000
 BOARD_KERNEL_PAGESIZE := 4096
 TARGET_KERNEL_CONFIG := bcm21664_hawaii_ss_logands_rev01_cm_defconfig
-TARGET_KERNEL_SOURCE := device/samsung/logands/kernel
+TARGET_KERNEL_SOURCE := kernel/samsung/loganxx
 TARGET_KERNEL_CUSTOM_TOOLCHAIN := arm-eabi-4.6
 
 # PARTITION SIZE
@@ -114,16 +114,41 @@ BOARD_RIL_CLASS := ../../../device/samsung/logands/ril/
 COMMON_GLOBAL_CFLAGS += -DDISABLE_ASHMEM_TRACKING
 
 # Recovery
-#TARGET_RECOVERY_INITRC := 
-TARGET_RECOVERY_FSTAB := device/samsung/logands/ramdisk/fstab.hawaii_ss_logands
-TARGET_USERIMAGES_USE_EXT4 := true
-TARGET_RECOVERY_PIXEL_FORMAT := BGRA_8888
-BOARD_HAS_NO_MISC_PARTITION := true
-BOARD_RECOVERY_HANDLES_MOUNT := true
-BOARD_USES_MMCUTILS := false
-BOARD_RECOVERY_ALWAYS_WIPES := false
-BOARD_SUPPRESS_EMMC_WIPE := true
-TARGET_RECOVERY_DENSITY := hdpi
+# Compile with BUILD_TWRP=true when build TWRP recovery
+ifeq ($(BUILD_TWRP),true)
+    TARGET_RECOVERY_FSTAB                   := device/samsung/logands/ramdisk/fstab.hawaii_ss_logands
+else
+    TARGET_RECOVERY_FSTAB                   := device/samsung/logands/ramdisk/fstab.hawaii_ss_logands
+endif
+TARGET_USE_CUSTOM_LUN_FILE_PATH             := /sys/class/android_usb/android0/f_mass_storage/lun/file
+TARGET_USERIMAGES_USE_EXT4                  := true
+TARGET_USERIMAGES_USE_F2FS                  := true
+TARGET_RECOVERY_PIXEL_FORMAT                := BGRA_8888
+BOARD_HAS_NO_MISC_PARTITION                 := true
+BOARD_RECOVERY_HANDLES_MOUNT                := true
+BOARD_USES_MMCUTILS                         := true
+BOARD_USE_USB_MASS_STORAGE_SWITCH           := true
+BOARD_SUPPRESS_EMMC_WIPE                    := true
+TARGET_RECOVERY_DENSITY                     := hdpi
+
+# TWRP
+DEVICE_RESOLUTION                           := 480x800
+TW_MAX_BRIGHTNESS                           := 255
+TW_CUSTOM_BATTERY_PATH                      := /sys/class/power_supply/battery
+TW_BRIGHTNESS_PATH                          := /sys/class/backlight/panel/brightness
+RECOVERY_SDCARD_ON_DATA                     := true
+TW_NO_REBOOT_BOOTLOADER                     := true
+TW_INCLUDE_CRYPTO                           := true
+RECOVERY_GRAPHICS_USE_LINELENGTH            := true
+TW_INTERNAL_STORAGE_PATH                    := /data/media
+TW_INTERNAL_STORAGE_MOUNT_POINT             := sdcard
+TW_EXTERNAL_STORAGE_PATH                    := /external_sd
+TW_EXTERNAL_STORAGE_MOUNT_POINT             := external_sd
+TW_DEFAULT_EXTERNAL_STORAGE                 := true
+TW_EXCLUDE_SUPERSU                          := true
+TW_NO_CPU_TEMP                              := true
+BOARD_HAS_NO_REAL_SDCARD                    := true
+HAVE_SELINUX                                := true
 
 # Vold
 BOARD_UMS_LUNFILE                  := /sys/class/android_usb/f_mass_storage/lun/file
